@@ -1,0 +1,22 @@
+services:
+  # Development: hot reload on http://localhost:5173
+  dev:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules # keep the container's own node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=1
+
+  # Production-like build served by nginx on http://localhost:8080
+  prod:
+    build:
+      context: .
+      target: prod
+    ports:
+      - "8080:80"
+    profiles: ["prod"]

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meet the Cat</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/profile.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="logo" href="#top"><span aria-hidden="true">🐾</span> <span data-name></span></a>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#gallery">Photos</a>
+        <a href="#facts">Facts</a>
+        <a href="#potty">Potty training</a>
+        <a href="#arcade">Arcade</a>
+      </nav>
+      <button id="pawToggle" class="toggle" aria-pressed="true" title="Toggle the paw that guards the screen edges">Paw traps: ON</button>
+    </header>
+
+    <main id="top">
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-text">
+          <p class="eyebrow">Hi! I'm</p>
+          <h1 data-name></h1>
+          <p class="tagline" data-tagline></p>
+          <div class="hero-actions">
+            <button id="treatBtn" class="btn">Give a treat 🐟</button>
+            <a class="btn ghost" href="#gallery">See my photos</a>
+          </div>
+          <div class="counters">
+            <div><b id="petCount">0</b><span>pets</span></div>
+            <div><b id="treatCount">0</b><span>treats</span></div>
+            <div><b id="caughtCount">0</b><span>mice caught</span></div>
+            <div><b id="swatCount">0</b><span>swats taken</span></div>
+          </div>
+        </div>
+
+        <div class="hero-cat">
+          <div id="bubble" class="bubble" aria-live="polite"></div>
+          <button id="heroCat" class="hero-cat-btn" aria-label="Pet the cat">
+            <svg viewBox="0 0 320 360" width="320" height="360" class="cat-art">
+              <path class="tail" d="M228,300 Q300,300 292,190" stroke="#e8893a" stroke-width="24" fill="none" stroke-linecap="round" />
+              <path class="fluff" fill="#f4a259" d="" />
+              <ellipse cx="160" cy="262" rx="96" ry="86" fill="#f4a259" />
+              <ellipse class="belly" cx="160" cy="288" rx="55" ry="60" fill="#fde3c4" />
+              <path d="M66,240 L90,244 M64,272 L90,272 M254,240 L230,244 M256,272 L230,272" stroke="#d9762b" stroke-width="9" stroke-linecap="round" />
+              <g class="swat">
+                <path class="claws" d="M98,336 L90,322 L104,332 M114,330 L110,314 L120,328 M130,330 L130,313 L136,329 M146,334 L152,320 L150,336"
+                  fill="#fffaf0" stroke="#cdbfa9" stroke-width="2" stroke-linejoin="round" />
+                <ellipse cx="122" cy="342" rx="30" ry="15" fill="#fde3c4" />
+              </g>
+              <ellipse cx="198" cy="342" rx="30" ry="15" fill="#fde3c4" />
+              <g class="head">
+                <g class="ear ear-l"><path d="M68,100 L80,18 L138,62 Z" fill="#f4a259" /><path d="M84,88 L89,42 L122,66 Z" fill="#f7b6c2" /></g>
+                <g class="ear ear-r"><path d="M252,100 L240,18 L182,62 Z" fill="#f4a259" /><path d="M236,88 L231,42 L198,66 Z" fill="#f7b6c2" /></g>
+                <ellipse cx="160" cy="118" rx="98" ry="82" fill="#f4a259" />
+                <path d="M140,40 L148,72 M160,36 L160,72 M180,40 L172,72 M64,118 L90,118 M66,142 L92,137 M256,118 L230,118 M254,142 L228,137"
+                  stroke="#d9762b" stroke-width="8" stroke-linecap="round" />
+                <ellipse cx="160" cy="154" rx="42" ry="28" fill="#fde3c4" />
+                <ellipse class="blush" cx="92" cy="150" rx="15" ry="9" fill="#f78fa7" />
+                <ellipse class="blush" cx="228" cy="150" rx="15" ry="9" fill="#f78fa7" />
+                <g class="eyes-open">
+                  <ellipse cx="120" cy="112" rx="21" ry="23" fill="#9ccc65" />
+                  <ellipse cx="200" cy="112" rx="21" ry="23" fill="#9ccc65" />
+                  <g class="pupil" data-cx="120" data-cy="112"><ellipse cx="120" cy="112" rx="8" ry="17" fill="#1f1f1f" /><circle cx="124" cy="104" r="4" fill="#fff" /></g>
+                  <g class="pupil" data-cx="200" data-cy="112"><ellipse cx="200" cy="112" rx="8" ry="17" fill="#1f1f1f" /><circle cx="204" cy="104" r="4" fill="#fff" /></g>
+                </g>
+                <g class="eyes-happy" stroke="#3a2a1a" stroke-width="6" fill="none" stroke-linecap="round">
+                  <path d="M99,116 Q120,94 141,116" />
+                  <path d="M179,116 Q200,94 221,116" />
+                </g>
+                <path d="M150,141 L170,141 L160,152 Z" fill="#e86a8a" />
+                <path class="mouth" d="M160,152 Q152,165 141,160 M160,152 Q168,165 179,160" stroke="#3a2a1a" stroke-width="3" fill="none" stroke-linecap="round" />
+                <ellipse class="mouth-open" cx="160" cy="163" rx="9" ry="8" fill="#a33b52" />
+                <g class="angry-face">
+                  <path d="M96,84 L140,100 M224,84 L180,100" stroke="#3a2a1a" stroke-width="7" stroke-linecap="round" />
+                  <path d="M140,158 Q160,150 180,158 Q178,184 160,186 Q142,184 140,158 Z" fill="#7a2338" />
+                  <path d="M145,158 L150,170 L154,157 Z M175,158 L170,170 L166,157 Z" fill="#fff" />
+                  <ellipse cx="160" cy="179" rx="9" ry="4" fill="#e86a8a" />
+                </g>
+                <path d="M118,150 L46,140 M118,158 L44,166 M202,150 L274,140 M202,158 L276,166" stroke="#3a2a1a" stroke-width="2" opacity="0.5" />
+              </g>
+            </svg>
+          </button>
+          <p class="hint">Click me for pets! <span>(Belly at your own risk.)</span></p>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="about" class="section">
+        <h2>About <span data-name></span></h2>
+        <p class="lead" data-bio></p>
+        <div class="about-grid">
+          <dl id="details" class="card details"></dl>
+          <div class="card">
+            <h3>Purr-sonality</h3>
+            <div id="traits" class="traits"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GALLERY -->
+      <section id="gallery" class="section tinted">
+        <h2>Photo gallery</h2>
+        <p class="lead">Click a photo to see it big. Tap the heart if it's adorable (it is).</p>
+        <div id="photos" class="photos"></div>
+      </section>
+
+      <!-- FACTS -->
+      <section id="facts" class="section">
+        <h2>Fun facts</h2>
+        <p class="lead">Flip a card to learn something new.</p>
+        <div id="factCards" class="facts"></div>
+      </section>
+
+      <!-- POTTY TRAINING -->
+      <section id="potty" class="section tinted mint">
+        <h2>Potty training journey</h2>
+        <p class="lead">
+          <span data-name></span> is learning to use the toilet! A training seat sits on the toilet and, one stage at a time,
+          a ring comes out so the hole gets bigger and there's less litter. Click any stage to see what it looks like and exactly how to do it, in case you'd like to try it with your own cat.
+        </p>
+        <div class="potty">
+          <div class="card potty-view">
+            <svg id="toiletArt" viewBox="0 0 300 330" width="300" height="330" aria-label="Toilet training seat, seen from above">
+              <rect x="70" y="8" width="160" height="62" rx="14" fill="#e9edf2" stroke="#c4ccd6" stroke-width="4" />
+              <rect x="135" y="22" width="30" height="10" rx="5" fill="#c4ccd6" />
+              <ellipse cx="150" cy="195" rx="122" ry="128" fill="#ffffff" stroke="#c4ccd6" stroke-width="4" />
+              <ellipse cx="150" cy="195" rx="96" ry="104" fill="#7cc4ea" />
+              <ellipse cx="150" cy="200" rx="60" ry="66" fill="#5fb2df" opacity="0.6" />
+              <g id="trainer"></g>
+            </svg>
+            <div class="potty-label">
+              <span id="pottyBadge" class="badge">Current stage</span>
+              <h3 id="pottyTitle"></h3>
+              <p id="pottyDetail"></p>
+            </div>
+            <div class="stage-guide">
+              <div class="guide-head">
+                <h4>How to do this stage</h4>
+                <span class="chip">⏱ <span id="pottyTime"></span></span>
+              </div>
+              <ol id="pottyHow" class="how"></ol>
+              <p class="ready"><span aria-hidden="true">✅</span> <span><b>Move on when:</b> <span id="pottyReady"></span></span></p>
+              <div class="stage-nav">
+                <button id="pottyPrev" class="btn ghost small">‹ Previous stage</button>
+                <button id="pottyNext" class="btn small">Next stage ›</button>
+              </div>
+            </div>
+          </div>
+          <div class="potty-side">
+            <ol id="pottySteps" class="steps"></ol>
+            <div class="cheer">
+              <button id="cheerBtn" class="btn">Cheer them on 🎉</button>
+              <span>Cheers so far: <b id="cheerCount">0</b></span>
+            </div>
+            <details class="card tips" open>
+              <summary>📋 Before you start</summary>
+              <ul id="pottyBefore"></ul>
+            </details>
+            <details class="card tips">
+              <summary>💡 Good to know</summary>
+              <ul id="pottyGood"></ul>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- ARCADE -->
+      <section id="arcade" class="section arcade">
+        <div class="arcade-screen">
+          <p class="arcade-kicker">★ ARCADE ★</p>
+          <h2 class="arcade-title">WHACK-A-MOUSE</h2>
+          <p class="arcade-copy">You're the cat's paw. Mice pop out of holes. You have 60 seconds. Bonk as many as you can!</p>
+          <p class="arcade-hi">HI-SCORE <span id="arcadeHi">000000</span></p>
+          <a class="arcade-btn" href="game/">▶ PRESS START</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">Made with 🐟 for <span data-name></span>. Watch the edges of the screen&hellip;</footer>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox" hidden>
+      <button class="lb-close" aria-label="Close">✕</button>
+      <button class="lb-prev" aria-label="Previous photo">‹</button>
+      <figure>
+        <img id="lbImg" alt="" />
+        <figcaption id="lbCap"></figcaption>
+      </figure>
+      <button class="lb-next" aria-label="Next photo">›</button>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="/src/profile.js"></script>
+  </body>
+</html>

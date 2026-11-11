@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Whack-a-Mouse</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/game.css" />
+  </head>
+  <body>
+    <div class="tv">
+      <canvas id="screen" width="256" height="240" aria-label="Whack-a-Mouse game screen"></canvas>
+    </div>
+    <footer>
+      <a id="backLink" href="../">&larr; Back to the cat's page</a>
+      <span>CLICK to whack &middot; M to mute</span>
+    </footer>
+    <script type="module" src="/src/game.js"></script>
+  </body>
+</html>

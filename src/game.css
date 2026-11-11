@@ -1,0 +1,70 @@
+:root {
+  --bg: #111018;
+  --text: #bcbcbc;
+  --link: #fca044;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.tv {
+  position: relative;
+  line-height: 0;
+  border: 6px solid #2a2833;
+  border-radius: 10px;
+  box-shadow: 0 0 60px rgba(252, 160, 68, 0.12);
+}
+
+/* CRT scanlines */
+.tv::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px);
+  border-radius: 4px;
+}
+
+canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  cursor: none;
+  touch-action: none;
+  border-radius: 4px;
+}
+
+footer {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  line-height: 1.6;
+}
+
+footer a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
