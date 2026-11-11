@@ -68,3 +68,81 @@ footer a {
 footer a:hover {
   text-decoration: underline;
 }
+
+/* ---------- full screen ---------- */
+.fs-btn {
+  font: inherit;
+  font-size: 10px;
+  color: var(--bg);
+  background: var(--link);
+  border: 0;
+  padding: 8px 12px;
+  box-shadow: 0 3px 0 #c84c0c;
+  cursor: pointer;
+}
+
+.fs-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #c84c0c;
+}
+
+.fs-exit {
+  display: none;
+  position: absolute;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  right: calc(10px + env(safe-area-inset-right));
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #4c4c4c;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fcfcfc;
+  font: 16px/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.touch-only { display: none; }
+html.touch .touch-only { display: inline; }
+html.touch .desktop-only { display: none; }
+
+/* Fills the whole screen. Used with the browser's real full-screen mode, and on its own on
+   phones (like iPhone) where websites can't go truly full screen. */
+body.fs {
+  padding: 0;
+  gap: 0;
+  background: #000;
+}
+
+body.fs footer {
+  display: none;
+}
+
+body.fs .tv {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: #000;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+body.fs .tv::after,
+body.fs canvas {
+  border-radius: 0;
+}
+
+body.fs .fs-exit {
+  display: block;
+}
+
+/* small screens: less frame, more game */
+@media (max-width: 600px) {
+  body { padding: 10px; gap: 12px; }
+  .tv { border-width: 3px; border-radius: 6px; }
+  footer { gap: 12px; font-size: 9px; }
+}

@@ -6,7 +6,8 @@ import { cat } from './cat.js';
 const canvas = document.getElementById('screen');
 const ctx = canvas.getContext('2d');
 const W = 256;
-const H = 240;
+const BASE_H = 240;
+let H = BASE_H; // grows taller in portrait full screen so the game fills a phone
 const GAME_LENGTH = 60; // seconds
 const FONT = '"Press Start 2P", monospace';
 
@@ -164,15 +165,22 @@ const sfx = {
 const HOLE_RX = 22;
 const HOLE_RY = 7;
 const holes = [];
-for (const y of [100, 152, 204]) {
-  for (const x of [56, 128, 200]) holes.push({ x, y, state: 'empty', rise: 0, t: 0, gold: false });
+for (let r = 0; r < 3; r++) {
+  for (const x of [56, 128, 200]) holes.push({ x, y: 0, row: r, state: 'empty', rise: 0, t: 0, gold: false });
 }
+// spread the 3 rows of holes over the playing field (below the 28px score bar)
+function layoutHoles() {
+  const rows = H === BASE_H ? [100, 152, 204] : [0.3, 0.58, 0.86].map((f) => Math.round(28 + (H - 28) * f));
+  for (const h of holes) h.y = rows[h.row];
+}
+layoutHoles();
 
 // stable grass speckles (seeded so they don't shimmer)
+const MAX_H = 440;
 let seed = 7;
 const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-const tufts = Array.from({ length: 90 }, () => ({ x: Math.floor(rand() * W), y: 30 + Math.floor(rand() * (H - 30)) }));
-const flowers = Array.from({ length: 10 }, () => ({ x: Math.floor(rand() * W), y: 34 + Math.floor(rand() * (H - 40)), c: rand() < 0.5 ? C.white : C.gold }));
+const tufts = Array.from({ length: 90 }, () => ({ x: Math.floor(rand() * W), y: 30 + Math.floor(rand() * (MAX_H - 30)) }));
+const flowers = Array.from({ length: 10 }, () => ({ x: Math.floor(rand() * W), y: 34 + Math.floor(rand() * (MAX_H - 40)), c: rand() < 0.5 ? C.white : C.gold }));
 
 const paw = { x: W / 2, y: H / 2, visible: false, down: 0 };
 let state = 'loading'; // loading | title | playing | over
@@ -233,7 +241,10 @@ function spawnMouse(progress) {
 
 function whack() {
   paw.down = 0.12;
-  if (state === 'title') return startGame();
+  if (state === 'title') {
+    if (isTouch) enterFullscreen();
+    return startGame();
+  }
   if (state === 'over') {
     if (clock - overAt > 1) startGame();
     return;
@@ -243,7 +254,8 @@ function whack() {
   for (const h of holes) {
     if ((h.state !== 'up' && h.state !== 'rising') || h.rise < 0.3) continue;
     const top = h.y - h.rise * 30;
-    if (Math.abs(paw.x - h.x) <= 17 && paw.y >= top - 4 && paw.y <= h.y + HOLE_RY + 2) {
+    const slop = isTouch ? 7 : 0; // fingers are less precise than a mouse
+    if (Math.abs(paw.x - h.x) <= 17 + slop && paw.y >= top - 4 - slop && paw.y <= h.y + HOLE_RY + 2 + slop) {
       combo++;
       const pts = (h.gold ? 50 : 10) + Math.min(combo - 1, 8) * 5;
       score += pts;
@@ -444,8 +456,8 @@ function drawTitle() {
   panel(36, 50);
   text('WHACK-A-MOUSE', W / 2, 48, C.orange, { size: 12, align: 'center', shadow: C.dorange });
   text('A CAT PAW ADVENTURE', W / 2, 68, C.lgray, { align: 'center', shadow: null });
-  if (Math.floor(clock * 2) % 2 === 0) text('CLICK TO START', W / 2, 166, C.white, { align: 'center' });
-  text('GOLD MICE = 50 PTS', W / 2, 222, C.gold, { align: 'center' });
+  if (Math.floor(clock * 2) % 2 === 0) text(isTouch ? 'TAP TO START' : 'CLICK TO START', W / 2, Math.round((holes[3].y + holes[6].y) / 2) - 4, C.white, { align: 'center' });
+  text('GOLD MICE = 50 PTS', W / 2, H - 18, C.gold, { align: 'center' });
 }
 
 function drawGameOver() {
@@ -455,7 +467,7 @@ function drawGameOver() {
   text(pad(score, 6), W / 2, 104, C.white, { size: 12, align: 'center', shadow: null });
   if (newHi && Math.floor(clock * 4) % 2 === 0) text('NEW HI-SCORE!', W / 2, 122, C.gold, { align: 'center', shadow: null });
   if (clock - overAt > 1 && Math.floor(clock * 2) % 2 === 0) {
-    text('CLICK TO PLAY AGAIN', W / 2, 134, C.white, { align: 'center', shadow: null });
+    text(isTouch ? 'TAP TO PLAY AGAIN' : 'CLICK TO PLAY AGAIN', W / 2, 134, C.white, { align: 'center', shadow: null });
   }
 }
 
@@ -488,22 +500,78 @@ canvas.addEventListener('pointerdown', (e) => {
   toCanvas(e);
   whack();
 });
-canvas.addEventListener('pointerleave', () => (paw.visible = false));
+canvas.addEventListener('pointerleave', (e) => {
+  if (e.pointerType === 'mouse') paw.visible = false;
+});
 addEventListener('keydown', (e) => {
   if (e.key === 'm' || e.key === 'M') muted = !muted;
+  if (e.key === 'f' || e.key === 'F') toggleFullscreen();
   if ((e.key === 'Enter' || e.key === ' ') && state !== 'playing') {
     e.preventDefault();
     whack();
   }
 });
 
+// ---------- sizing & full screen ----------
+const isTouch = matchMedia('(pointer: coarse)').matches;
+if (isTouch) document.documentElement.classList.add('touch');
+const fsBtn = document.getElementById('fsBtn');
+const fsExit = document.getElementById('fsExit');
+const root = document.documentElement;
+const canNativeFs = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+const nativeFsElement = () => document.fullscreenElement || document.webkitFullscreenElement;
+
 function fit() {
-  const avail = Math.min((innerWidth - 48) / W, (innerHeight - 100) / H);
-  const scale = avail >= 1 ? Math.floor(avail) : Math.max(0.5, avail);
+  const full = document.body.classList.contains('fs');
+  // Portrait phone in full screen: make the field taller instead of leaving black bars.
+  const tallH = full && innerHeight > innerWidth * 1.15 ? Math.min(MAX_H, Math.round((W * innerHeight) / innerWidth)) : BASE_H;
+  if (tallH !== H) {
+    H = tallH;
+    canvas.height = H;
+    layoutHoles();
+  }
+  const vw = full ? innerWidth : innerWidth - (innerWidth <= 600 ? 26 : 48);
+  const vh = full ? innerHeight : innerHeight - (innerWidth <= 600 ? 80 : 100);
+  const avail = Math.max(0.5, Math.min(vw / W, vh / H));
+  // Prefer a size where every game pixel covers a whole number of physical screen pixels (extra crisp).
+  // On high-res phone screens the difference is invisible, so fill the space instead.
+  const dpr = devicePixelRatio || 1;
+  const snapped = Math.max(1, Math.floor(avail * dpr)) / dpr;
+  const scale = dpr < 2 || snapped >= avail * 0.94 ? snapped : avail;
   canvas.style.width = `${W * scale}px`;
   canvas.style.height = `${H * scale}px`;
 }
+
+function enterFullscreen() {
+  document.body.classList.add('fs');
+  if (canNativeFs && !nativeFsElement()) {
+    const req = root.requestFullscreen?.bind(root) ?? root.webkitRequestFullscreen?.bind(root);
+    try {
+      req({ navigationUI: 'hide' })?.catch?.(() => {});
+    } catch {}
+  }
+  fit();
+}
+
+function exitFullscreen() {
+  document.body.classList.remove('fs');
+  if (nativeFsElement()) (document.exitFullscreen ?? document.webkitExitFullscreen)?.call(document);
+  fit();
+}
+
+const toggleFullscreen = () => (document.body.classList.contains('fs') ? exitFullscreen() : enterFullscreen());
+
+fsBtn.addEventListener('click', enterFullscreen);
+fsExit.addEventListener('click', exitFullscreen);
+// leaving the browser's full screen (Esc key, back gesture) also leaves our full-screen layout
+for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) {
+  document.addEventListener(ev, () => {
+    if (!nativeFsElement()) document.body.classList.remove('fs');
+    fit();
+  });
+}
 addEventListener('resize', fit);
+addEventListener('orientationchange', () => setTimeout(fit, 250));
 fit();
 
 // ---------- loop ----------

@@ -125,7 +125,16 @@ const counts = {
   cheers: load('cheers', 0),
   swats: load('swats', 0),
   bellyRubs: load('bellyRubs', 0),
+  trust: load('bellyTrust', 0), // treats given since the last belly rub
 };
+
+// Treats build trust: the belly-rub chance climbs from 10% to 95% at 10 treats.
+// A belly rub uses the trust up, so it's a reward, not a permanent unlock.
+const BELLY_RUB_BASE = 0.1;
+const BELLY_RUB_MAX = 0.95;
+const TREATS_FOR_MAX = 10;
+const bellyChance = () =>
+  BELLY_RUB_BASE + ((BELLY_RUB_MAX - BELLY_RUB_BASE) * Math.min(counts.trust, TREATS_FOR_MAX)) / TREATS_FOR_MAX;
 let happyTimer = 0;
 let bubbleTimer = 0;
 
@@ -134,6 +143,19 @@ function renderCounts() {
   $('#treatCount').textContent = counts.treats;
   $('#cheerCount').textContent = counts.cheers;
   $('#swatCount').textContent = counts.swats;
+  renderTrust();
+}
+
+function renderTrust() {
+  const pct = Math.round(bellyChance() * 100);
+  const left = TREATS_FOR_MAX - Math.min(counts.trust, TREATS_FOR_MAX);
+  $('#trustPct').textContent = `${pct}%`;
+  $('#trustFill').style.width = `${pct}%`;
+  $('#trustHint').textContent =
+    left > 0
+      ? `Treats build trust. ${left} more ${left === 1 ? 'treat' : 'treats'} for a ${Math.round(BELLY_RUB_MAX * 100)}% chance.`
+      : `Maximum trust! Go for the belly.`;
+  $('.trust').classList.toggle('maxed', left === 0);
 }
 renderCounts();
 
@@ -154,7 +176,6 @@ function makeHappy(cls, ms = 1300) {
 
 // ---------- the belly trap ----------
 // Like most cats: the belly looks soft and inviting, and touching it is a terrible idea.
-const BELLY_RUB_CHANCE = 0.1; // every so often, the cat actually allows it
 let angryUntil = 0;
 let angryTimer = 0;
 
@@ -208,13 +229,22 @@ function getMad(x, y) {
 }
 
 function rareBellyRub(x, y) {
+  const bribed = counts.trust > 0;
   counts.bellyRubs++;
   save('bellyRubs', counts.bellyRubs);
+  counts.trust = 0; // the trust is spent
+  save('bellyTrust', 0);
+  renderCounts();
   makeHappy('petted', 2200);
   purr();
   setTimeout(purr, 900);
-  say(pick(['…fine. Just this once.', 'Okay… maybe a little.', 'Tell no one.']));
-  toast(`🌟 RARE! ${cat.name} allowed a belly rub! (${counts.bellyRubs} so far)`);
+  if (bribed) {
+    say(pick(['Purrrr… worth the fish.', 'You may proceed.', 'Okay, you earned this.']));
+    toast(`🌟 ${cat.name} allowed a belly rub! The treats worked. (${counts.bellyRubs} so far)`);
+  } else {
+    say(pick(['…fine. Just this once.', 'Okay… maybe a little.', 'Tell no one.']));
+    toast(`🌟 RARE! ${cat.name} allowed a belly rub! (${counts.bellyRubs} so far)`);
+  }
   for (let i = 0; i < 10; i++) floaty(pick(['🌟', '✨', '💖']), x, y, { dx: (Math.random() - 0.5) * 220 });
 }
 
@@ -239,7 +269,7 @@ heroCat.addEventListener('click', (e) => {
     return;
   }
   if (e.target.closest('.belly')) {
-    if (Math.random() < BELLY_RUB_CHANCE) rareBellyRub(x, y);
+    if (Math.random() < bellyChance()) rareBellyRub(x, y);
     else getMad(x, y);
     return;
   }
@@ -276,10 +306,18 @@ $('#treatBtn').addEventListener('click', () => {
     heroCat.classList.remove('open-mouth');
     counts.treats++;
     save('treats', counts.treats);
+    const wasMaxed = counts.trust >= TREATS_FOR_MAX;
+    counts.trust = Math.min(counts.trust + 1, TREATS_FOR_MAX);
+    save('bellyTrust', counts.trust);
     renderCounts();
     makeHappy('nom', 900);
     chirp([660, 880, 990]);
-    say(wasAngry ? '…okay. You are forgiven.' : pick(['Nom nom nom!', 'Delicious!', 'Another one?', 'Yum!', 'Fish o’clock!']));
+    if (!wasMaxed && counts.trust === TREATS_FOR_MAX) {
+      say('…okay. You may touch the belly.');
+      toast(`${cat.name} trusts you! Belly rub chance: ${Math.round(BELLY_RUB_MAX * 100)}%`);
+    } else {
+      say(wasAngry ? '…okay. You are forgiven.' : pick(['Nom nom nom!', 'Delicious!', 'Another one?', 'Yum!', 'Fish o’clock!']));
+    }
   }, 650);
 });
 

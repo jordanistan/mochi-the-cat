@@ -25,7 +25,7 @@ If the mouse lingers near any edge of the screen, an orange tabby paw peeks in, 
 - **Click Mochi** for pets: purring, hearts and happy eyes. Mochi's eyes follow the mouse wherever it goes.
 - **Give a treat** to toss a fish into Mochi's mouth. *Nom nom nom.*
 - **The belly is a trap**, like it is on a real cat. Hovering over it makes the tail start flicking as a warning. If you click anyway, Mochi flattens its ears, narrows its pupils, puffs up its fur, hisses and swats you, leaving scratch marks. Mochi stays mad for a few seconds, though a treat will earn your forgiveness.
-- About **1 in 10** belly clicks, Mochi allows a 🌟 **rare belly rub**.
+- About **1 in 10** belly clicks, Mochi allows a 🌟 **rare belly rub**. **Treats build trust:** each one raises the chance, up to **95% after 10 treats**, and a meter shows the current odds. A belly rub uses up the trust.
 
 The page counts pets, treats, mice caught and swats taken.
 
@@ -103,7 +103,7 @@ The current gallery images are illustrated placeholders.
 
 Other settings you can change:
 
-- Belly rub odds: `BELLY_RUB_CHANCE` in `src/profile.js`
+- Belly rub odds and how many treats it takes: `BELLY_RUB_BASE`, `BELLY_RUB_MAX` and `TREATS_FOR_MAX` in `src/profile.js`
 - How fast and far the paw reaches: the constants at the top of `src/cursor.js`
 - Game length and difficulty: `GAME_LENGTH` and `spawnMouse()` in `src/game.js`
 

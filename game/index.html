@@ -2,7 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#111018" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Whack-a-Mouse</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,10 +17,12 @@
   <body>
     <div class="tv">
       <canvas id="screen" width="256" height="240" aria-label="Whack-a-Mouse game screen"></canvas>
+      <button id="fsExit" class="fs-exit" aria-label="Exit full screen">✕</button>
     </div>
     <footer>
       <a id="backLink" href="../">&larr; Back to the cat's page</a>
-      <span>CLICK to whack &middot; M to mute</span>
+      <button id="fsBtn" class="fs-btn">⛶ Full screen</button>
+      <span class="help"><span class="desktop-only">CLICK to whack &middot; M to mute &middot; F full screen</span><span class="touch-only">TAP to whack</span></span>
     </footer>
     <script type="module" src="/src/game.js"></script>
   </body>
